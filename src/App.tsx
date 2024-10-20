@@ -1,71 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import './App.css'; 
+import React, { useState, useEffect } from "react";
+import "./App.css";
 
-import SearchBar from './components/SearchBar';
-import CompanyCard from './components/CompanyCard';
-
-const dummyCompanies = [
-  {
-    logo: 'https://via.placeholder.com/100',
-    name: 'TechInnovate',
-    website: 'https://techinnovate.com',
-    shortDescription: 'Revolutionizing AI for small businesses',
-    longDescription: 'TechInnovate is developing cutting-edge AI solutions to help small businesses automate their processes and compete with larger corporations.',
-    pitchVideo: 'https://youtube.com/watch?v=dummyvideo1',
-    founders: [
-      {
-        name: 'Jane Doe',
-        email: 'jane@techinnovate.com',
-        linkedIn: 'https://linkedin.com/in/janedoe',
-        photo: 'https://via.placeholder.com/50',
-      },
-    ],
-  },
-  {
-    logo: 'https://via.placeholder.com/100',
-    name: 'GreenEnergy',
-    website: 'https://greenenergy.com',
-    shortDescription: 'Sustainable energy solutions for homes',
-    longDescription: 'GreenEnergy is creating affordable and efficient renewable energy systems for residential use, making sustainable living accessible to everyone.',
-    pitchVideo: 'https://youtube.com/watch?v=dummyvideo2',
-    founders: [
-      {
-        name: 'John Smith',
-        email: 'john@greenenergy.com',
-        linkedIn: 'https://linkedin.com/in/johnsmith',
-        photo: 'https://via.placeholder.com/50',
-      },
-      {
-        name: 'Emily Brown',
-        email: 'emily@greenenergy.com',
-        linkedIn: 'https://linkedin.com/in/emilybrown',
-        photo: 'https://via.placeholder.com/50',
-      },
-      {
-        name: 'John Smith',
-        email: 'john@greenenergy.com',
-        linkedIn: 'https://linkedin.com/in/johnsmith',
-        photo: 'https://via.placeholder.com/50',
-      },
-    ],
-  },
-  {
-    logo: 'https://via.placeholder.com/100',
-    name: 'HealthTrack',
-    website: 'https://healthtrack.com',
-    shortDescription: 'Personalized health monitoring app',
-    longDescription: 'HealthTrack uses machine learning to provide personalized health insights and recommendations based on user data from wearable devices and manual input.',
-    pitchVideo: 'https://youtube.com/watch?v=dummyvideo3',
-    founders: [
-      {
-        name: 'Michael Johnson',
-        email: 'michael@healthtrack.com',
-        linkedIn: 'https://linkedin.com/in/michaeljohnson',
-        photo: 'https://via.placeholder.com/50',
-      },
-    ],
-  },
-];
+import SearchBar from "./components/SearchBar";
+import CompanyCard from "./components/CompanyCard";
+import pushCompaniesToDatabase from "./uploadData";
+import { db, ref } from "./firebase";
+import { onValue } from "firebase/database";
 
 interface Founder {
   name: string;
@@ -85,18 +25,32 @@ interface Company {
 }
 
 function App() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [companies, setCompanies] = useState<Company[]>(dummyCompanies);
-  const [filteredCompanies, setFilteredCompanies] = useState<Company[]>(dummyCompanies);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [filteredCompanies, setFilteredCompanies] = useState<Company[]>([]);
 
   useEffect(() => {
-    const results = companies.filter(company =>
-      company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      company.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      company.longDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      company.founders.some(founder => 
-        founder.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    const companiesRef = ref(db, "companies");
+    onValue(companiesRef, (snapshot) => {
+      const data = snapshot.val();
+      const companiesArray = Object.values(data) as Company[];
+      setCompanies(companiesArray);
+    });
+  }, []);
+
+  useEffect(() => {
+    const results = companies.filter(
+      (company) =>
+        company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        company.shortDescription
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        company.longDescription
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        company.founders.some((founder) =>
+          founder.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
     );
     setFilteredCompanies(results);
   }, [searchTerm, companies]);
@@ -106,8 +60,10 @@ function App() {
   };
 
   const resultText = () => {
-    if (filteredCompanies.length === 0) return 'No matches found';
-    return `Showing ${filteredCompanies.length} result${filteredCompanies.length === 1 ? '' : 's'}`;
+    if (filteredCompanies.length === 0) return "No matches found";
+    return `Showing ${filteredCompanies.length} result${
+      filteredCompanies.length === 1 ? "" : "s"
+    }`;
   };
 
   return (
@@ -116,8 +72,12 @@ function App() {
       <h1 className="welcome-text">
         Welcome to <span className="highlight">Demo Day!</span>
       </h1>
+      {/* <button onClick={pushCompaniesToDatabase}>
+        Upload Companies to Database
+      </button> */}
       <h3 className="description">
-        To help you navigate through Demo Day, we put together a comprehensive list of every company participating today.
+        To help you navigate through Demo Day, we put together a comprehensive
+        list of every company participating today.
       </h3>
       <SearchBar onSearch={handleSearch} />
       <p className="results-text">{resultText()}</p>
