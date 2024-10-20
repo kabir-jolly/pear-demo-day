@@ -36,3 +36,69 @@
     transform: rotate(360deg);
   }
 }
+
+.landing-page {
+  background-color: white;
+  color: black;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2rem;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.logo {
+  align-self: center;
+  width: 150px;
+  margin-bottom: 2rem;
+}
+
+.welcome-text {
+  font-size: 3rem;
+  font-weight: normal;
+  margin: 0;
+  margin-bottom: 1.5rem;
+}
+
+.description {
+  font-weight: normal;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.highlight {
+  color: rgb(200, 216, 91);
+  border-bottom: 5px solid rgb(200, 216, 91);
+  padding-bottom: 2px;
+}
+
+.company-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.results-text {
+  margin-top: 1rem;
+  font-style: italic;
+  color: #666;
+  align-self: flex-end;
+}
+
+.search-bar {
+  width: 100%;
+  max-width: 600px;
+  margin: 1rem auto;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
