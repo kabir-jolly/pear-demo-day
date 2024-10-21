@@ -6,6 +6,7 @@ import CompanyCard from "./components/CompanyCard";
 import pushCompaniesToDatabase from "./uploadData";
 import { db, ref } from "./firebase";
 import { onValue } from "firebase/database";
+import PearAssist from "./components/PearAssist";
 
 interface Founder {
   name: string;
@@ -28,6 +29,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [companies, setCompanies] = useState<Company[]>([]);
   const [filteredCompanies, setFilteredCompanies] = useState<Company[]>([]);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     const companiesRef = ref(db, "companies");
@@ -66,6 +68,10 @@ function App() {
     }`;
   };
 
+  const toggleChat = () => {
+    setIsChatOpen(!isChatOpen);
+  };
+
   return (
     <div className="App landing-page">
       <img src="/Pear-Logo.svg" alt="Pear Logo" className="logo" />
@@ -86,6 +92,10 @@ function App() {
           <CompanyCard key={index} {...company} />
         ))}
       </div>
+      <div className="floating-pear" onClick={toggleChat}>
+        <img src="/pear-no-text.png" alt="Pear Logo" />
+      </div>
+      {isChatOpen && <PearAssist onClose={toggleChat} />}
     </div>
   );
 }
