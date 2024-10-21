@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import "./CompanyCard.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 interface Founder {
   name: string;
@@ -9,7 +11,7 @@ interface Founder {
   photo: string;
 }
 
-interface CompanyCardProps {
+interface Company {
   logo: string;
   name: string;
   website: string;
@@ -17,6 +19,16 @@ interface CompanyCardProps {
   longDescription: string;
   pitchVideo: string;
   founders: Founder[];
+}
+
+interface Investor {
+  name: string;
+  email: string;
+}
+
+interface CompanyCardProps extends Company {
+  investor: Investor | null;
+  onConnect: () => void;
 }
 
 const CompanyCard: React.FC<CompanyCardProps> = ({
@@ -27,6 +39,8 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   longDescription,
   pitchVideo,
   founders,
+  investor,
+  onConnect,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
@@ -132,6 +146,11 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             ))}
           </div>
         </div>
+      )}
+      {investor && (
+        <button className="connect-button" onClick={onConnect}>
+          <FontAwesomeIcon icon={faEnvelope} />
+        </button>
       )}
     </div>
   );

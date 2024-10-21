@@ -118,3 +118,24 @@
 .founder-info a {
   margin-top: 2px;
 }
+
+.connect-button {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background-color: rgb(200, 216, 91);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.connect-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.connect-button img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(0);
+}

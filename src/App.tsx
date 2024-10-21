@@ -7,6 +7,8 @@ import pushCompaniesToDatabase from "./uploadData";
 import { db, ref } from "./firebase";
 import { onValue } from "firebase/database";
 import PearAssist from "./components/PearAssist";
+import InvestorLogin from "./components/InvestorLogin";
+import { sendIntroEmail } from "./utils/emailService";
 
 interface Founder {
   name: string;
@@ -25,11 +27,17 @@ interface Company {
   founders: Founder[];
 }
 
+interface Investor {
+  name: string;
+  email: string;
+}
+
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [companies, setCompanies] = useState<Company[]>([]);
   const [filteredCompanies, setFilteredCompanies] = useState<Company[]>([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [investor, setInvestor] = useState<Investor | null>(null);
 
   useEffect(() => {
     const companiesRef = ref(db, "companies");
@@ -72,6 +80,16 @@ function App() {
     setIsChatOpen(!isChatOpen);
   };
 
+  const handleInvestorLogin = (investorData: Investor) => {
+    setInvestor(investorData);
+  };
+
+  const handleConnect = (company: Company) => {
+    if (investor) {
+      sendIntroEmail(investor, company);
+    }
+  };
+
   return (
     <div className="App landing-page">
       <img src="/Pear-Logo.svg" alt="Pear Logo" className="logo" />
@@ -89,13 +107,19 @@ function App() {
       <p className="results-text">{resultText()}</p>
       <div className="company-list">
         {filteredCompanies.map((company: Company, index: number) => (
-          <CompanyCard key={index} {...company} />
+          <CompanyCard
+            key={index}
+            {...company}
+            investor={investor}
+            onConnect={() => handleConnect(company)}
+          />
         ))}
       </div>
       <div className="floating-pear" onClick={toggleChat}>
         <img src="/pear-no-text.png" alt="Pear Logo" />
       </div>
       {isChatOpen && <PearAssist onClose={toggleChat} />}
+      {!investor && <InvestorLogin onLogin={handleInvestorLogin} />}
     </div>
   );
 }
