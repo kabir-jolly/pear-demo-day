@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const SENDGRID_API_KEY =
-  "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";
+const SENDGRID_API_KEY = "";
 const SENDGRID_API_URL = "https://api.sendgrid.com/v3/mail/send";
 
 interface Founder {
